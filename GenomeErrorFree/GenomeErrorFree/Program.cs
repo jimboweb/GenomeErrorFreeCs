@@ -19,15 +19,32 @@ namespace GenomeErrorFree
             var input = getInput();
         }
 
-        private string[] getInput()
+        private List<string> getInput()
         {
-            var input = new string[inputSize];
+            var input = new List<String>(); ;
             for (int i = 0; i < inputSize; i++)
             {
-                input[i] = Console.ReadLine();
+                input.Add(Console.ReadLine());
             }
             return input;
 
         }
+
+        private List<String> removeDupes(List<String> input)
+        {
+            input.Sort();
+            var output = new List<string>();
+            var currentInput = "";
+            foreach(var str in input)
+            {
+                if (!str.Equals(currentInput))
+                {
+                    output.Add(str);
+                    currentInput = str;
+                }
+            }
+            return output;
+        }
+
     }
 }
