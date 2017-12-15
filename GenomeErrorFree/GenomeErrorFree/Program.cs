@@ -16,12 +16,17 @@ namespace GenomeErrorFree
         }
         private void run()
         {
+            var input = getInput();
+        }
+
+        private string[] getInput()
+        {
             var input = new string[inputSize];
             for (int i = 0; i < inputSize; i++)
             {
                 input[i] = Console.ReadLine();
             }
-
+            return input;
 
         }
     }
