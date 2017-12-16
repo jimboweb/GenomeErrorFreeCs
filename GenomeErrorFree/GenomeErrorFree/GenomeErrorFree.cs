@@ -18,20 +18,36 @@ namespace GenomeErrorFree
         /// <ol>
         /// <li>get the input</li>
         /// <li>remove all the duplicates</li>
-        /// <li>build the overlap graph</li>
-        /// <li>draw greedy hamiltonian path</li>
-        /// <li>assembles the string from the graph and path</li>
+        /// <li>gets the genome using returnGenome method</li>
         /// <li>prints it out</li>
         /// </ol>
         /// </summary>
         private void run()
         {
             var input = getInput();
+            var finalString = returnGenome(input);
+            Console.WriteLine(finalString);
+        }
+
+        /// <summary>
+        /// returns the genome from a list of strings
+        /// <ol>
+        /// <li>remove all the duplicates</li>
+        /// <li>build the overlap graph</li>
+        /// <li>draw greedy hamiltonian path</li>
+        /// <li>assembles the string from the graph and path</li>
+        /// <li>returns genome string</li>
+        /// </ol>
+        /// </summary>
+        /// <param name="input">the input strings</param>
+        /// <returns>the genome</returns>
+        public string returnGenome(List<string> input)
+        {
             input = removeDupes(input);
             OverlapGraph gr = new OverlapGraph(input);
             HamiltonianPath hp = new HamiltonianPath(gr);
             var finalString = assembleString(gr, hp);
-            Console.WriteLine(finalString);
+            return finalString;
         }
         /// <summary>
         /// gets input as list
@@ -58,8 +74,8 @@ namespace GenomeErrorFree
         /// <summary>
         /// gets rid of any duplicate inputs
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">the original string inputs</param>
+        /// <returns>the string without the inputs</returns>
         private List<String> removeDupes(List<String> input)
         {
             input.Sort();
