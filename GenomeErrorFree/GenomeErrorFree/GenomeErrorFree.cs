@@ -14,11 +14,24 @@ namespace GenomeErrorFree
             var gef = new GenomeErrorFree();
             gef.run();
         }
+        /// <summary>
+        /// <ol>
+        /// <li>get the input</li>
+        /// <li>remove all the duplicates</li>
+        /// <li>build the overlap graph</li>
+        /// <li>draw greedy hamiltonian path</li>
+        /// <li>assembles the string from the graph and path</li>
+        /// <li>prints it out</li>
+        /// </ol>
+        /// </summary>
         private void run()
         {
             var input = getInput();
             input = removeDupes(input);
             OverlapGraph gr = new OverlapGraph(input);
+            HamiltonianPath hp = new HamiltonianPath(gr);
+            var finalString = assembleString(gr, hp);
+            Console.WriteLine(finalString);
         }
         /// <summary>
         /// gets input as list
@@ -33,6 +46,13 @@ namespace GenomeErrorFree
             }
             return input;
 
+        }
+
+        private string assembleString(OverlapGraph gr, HamiltonianPath hp)
+        {
+            var rtrn = "";
+            //TODO: assemble the string from the graph
+            return rtrn;
         }
 
         /// <summary>
@@ -56,6 +76,35 @@ namespace GenomeErrorFree
             return output;
         }
 
+    }
+
+    class HamiltonianPath
+    {
+        List<PathNode> nodes { get; set; }
+        public HamiltonianPath()
+        {
+            nodes = new List<PathNode>();
+        }
+        public HamiltonianPath(OverlapGraph gr)
+        {
+            nodes = new List<PathNode>();
+            //TODO: whatever I did in the other program to create the path
+        }
+        public void AddNode(int NextString, int OverlapLength)
+        {
+            nodes.Add(new PathNode(NextString, OverlapLength));
+        }
+    }
+
+    class PathNode
+    {
+        int NextString { get; set; };
+        int OverlapLength { get; set; }
+        public PathNode (int NextString, int OverlapLength)
+        {
+            this.NextString = NextString;
+            this.OverlapLength = OverlapLength;
+        }
     }
 
     /// <summary>
