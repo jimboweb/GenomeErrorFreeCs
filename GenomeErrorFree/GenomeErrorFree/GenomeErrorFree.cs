@@ -96,26 +96,42 @@ namespace GenomeErrorFree
 
     class HamiltonianPath
     {
-        List<PathNode> nodes { get; set; }
-        public HamiltonianPath()
-        {
-            nodes = new List<PathNode>();
-        }
+        PathNode[] nodes { get; set; }
         public HamiltonianPath(OverlapGraph gr)
         {
-            nodes = new List<PathNode>();
-            //TODO: whatever I did in the other program to create the path
+            int numberOfNodes = gr.StringSegments.Count;
+            nodes = new PathNode[numberOfNodes];
+            LiteHeap segHeap = new LiteHeap(gr.StringSegments.Cast<IComparable>());
+            bool[] usedNodes = new bool[numberOfNodes];
+           while (!segHeap.isEmpty())
+            {
+                StringSegment nextSeg = (StringSegment)segHeap.getMax();
+                PathNode currentNode = nodes[nextSeg.Index];
+                SuffixOverlap nextOverlap = getNextUnusedOverlap(nextSeg, usedNodes);
+                currentNode = new PathNode(nextOverlap.OverlappingStringIndex, nextOverlap.OverlapPoint);
+            }
         }
-        public void AddNode(int NextString, int OverlapLength)
+
+        private SuffixOverlap getNextUnusedOverlap(StringSegment nextSeg, bool[] usedNodes)
         {
-            nodes.Add(new PathNode(NextString, OverlapLength));
+            int nextNode;
+            SuffixOverlap nextOverlap;
+            LiteHeap olHeap = new LiteHeap(nextSeg.SuffixOverlaps.Cast<IComparable>());
+            do
+            {
+                nextOverlap = (SuffixOverlap)olHeap.getMax();
+                nextNode = nextOverlap.OverlappingStringIndex;
+            } while (!usedNodes[nextNode]);
+            usedNodes[nextNode] = true;
+            return nextOverlap;
         }
+
     }
 
     class PathNode
     {
-        int NextString { get; set; };
-        int OverlapLength { get; set; }
+        public int NextString { get; set; }
+        public int OverlapLength { get; set; }
         public PathNode (int NextString, int OverlapLength)
         {
             this.NextString = NextString;
@@ -128,7 +144,7 @@ namespace GenomeErrorFree
     /// </summary>
     class OverlapGraph
     {
-        List<StringSegment> StringSegments { get; }
+        public List<StringSegment> StringSegments { get; }
 
         /// <summary>
         /// <ol>
@@ -152,10 +168,11 @@ namespace GenomeErrorFree
         }
     }
 
-    class StringSegment
+    class StringSegment:IComparable<StringSegment>
     {
         OverlapGraph Parent { get;  }
         public List<SuffixOverlap> SuffixOverlaps { get; set; }
+        public SuffixOverlap LongestOverlap { get; private set; }
         public string Str { get; }
         public int Index { get; }
         public int Length { get { return Str.Length; } }
@@ -218,7 +235,22 @@ namespace GenomeErrorFree
         /// <param name="OverlapPoint">the point where it overlaps</param>
         public void AddOverlap(StringSegment OverlappingString, int OverlapPoint)
         {
-            SuffixOverlaps.Add(new SuffixOverlap(this, OverlappingString, OverlapPoint));
+            var newOverlap = new SuffixOverlap(this, OverlappingString, OverlapPoint);
+            SuffixOverlaps.Add(newOverlap);
+            if (LongestOverlap==null || newOverlap.LengthOfOverlap > LongestOverlap.LengthOfOverlap)
+            {
+                LongestOverlap = newOverlap;
+            }
+        }
+
+        /// <summary>
+        /// compares by length of longest overlap
+        /// </summary>
+        /// <param name="other">other String Segment</param>
+        /// <returns>comprison of longest overlaps</returns>
+        public int CompareTo(StringSegment other)
+        {
+            return LongestOverlap.LengthOfOverlap.CompareTo(other.LongestOverlap.LengthOfOverlap);
         }
     }
 
@@ -228,7 +260,7 @@ namespace GenomeErrorFree
     class SuffixOverlap:IComparable<SuffixOverlap>
     {
         StringSegment Parent { get; }
-        StringSegment OverlappingString { get; }
+        public StringSegment OverlappingString { get; }
         public int OverlappingStringIndex { get;  }
         public int OverlapPoint { get;  }
         public int LengthOfOverlap { get;  }
@@ -266,6 +298,110 @@ namespace GenomeErrorFree
         public int CompareTo(SuffixOverlap other)
         {
             return LengthOfOverlap.CompareTo(other.LengthOfOverlap);
+        }
+    }
+
+    /// <summary>
+    /// very light heap class of comparables. 
+    /// can only build heap from list of segments and 
+    /// get max. no public insert method.
+    /// </summary>
+    class LiteHeap
+    {
+        IComparable[] HeapArray;
+        int HeapSize = 0;
+        public LiteHeap(IEnumerable<IComparable> vals)
+        {
+            HeapArray = new IComparable[vals.Count()];
+            foreach(var val in vals)
+            {
+                insert(val);
+            }
+        }
+
+        /// <summary>
+        /// gets maximum or null if empty
+        /// </summary>
+        /// <returns></returns>
+        public IComparable getMax()
+        {
+            if (isEmpty())
+                return null;
+            var rtrn = HeapArray[0];
+            HeapArray[0] = HeapArray[HeapSize];
+            HeapArray[HeapSize] = null;
+            HeapSize--;
+            shiftDown(0);
+            return rtrn;
+        }
+
+        public bool isEmpty()
+        {
+            return HeapSize < 1;
+        }
+
+        private void insert(IComparable val)
+        {
+            if (HeapSize == HeapArray.Length)
+                throw new IndexOutOfRangeException("can't insert value");
+            HeapArray[HeapSize] = val;
+            shiftUp(HeapSize);
+            HeapSize++;
+        }
+
+        private int parent(int ind)
+        {
+            return ind == 0 ? -1 : ind / 2;
+        }
+
+        private int leftOrRightChild(int ind, int leftOrRight)
+        {
+            int childIndex = leftOrRight==0? 2 * ind : 2 * ind + 1;
+            return childIndex < HeapSize ? childIndex : -1;
+        }
+        
+        private int[] children(int ind)
+        {
+            int[] children = new int[2];
+            for (int i = 0; i< children.Length;i++)
+            {
+                children[i] = leftOrRightChild(ind, i);
+            }
+            return children;
+        }
+
+        private void swap(int a, int b)
+        {
+            var temp = HeapArray[a];
+            HeapArray[a] = HeapArray[b];
+            HeapArray[b] = HeapArray[a];
+        }
+
+        private void shiftUp(int i)
+        {
+            int p = parent(i);
+            if (p != -1)
+            {
+                if (HeapArray[i].CompareTo(HeapArray[p]) == 1)
+                {
+                    swap(p, i);
+                    shiftUp(p);
+                }
+            }
+        }
+
+        private void shiftDown(int i)
+        {
+            var leftIndex = leftOrRightChild(i, 0);
+            var rightIndex = leftOrRightChild(i, 1);
+            int largest = i;
+            largest = (leftIndex != -1 && HeapArray[leftIndex].CompareTo(HeapArray[largest]) == 1) ? leftIndex : largest;
+            largest = (rightIndex != -1 && HeapArray[rightIndex].CompareTo(HeapArray[largest]) == 1) ? rightIndex : largest;
+            if (largest != i)
+            {
+                swap(i, largest);
+                shiftDown(largest);
+            }
         }
     }
 }
