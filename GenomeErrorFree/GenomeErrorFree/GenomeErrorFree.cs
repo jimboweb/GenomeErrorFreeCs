@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 //TODO: write the tests
 namespace GenomeErrorFree
 {
-    class GenomeErrorFree
+    public class GenomeErrorFree
     {
         int inputSize = 1618; 
         static void Main(string[] args)
         {
             var gef = new GenomeErrorFree();
             gef.run();
+        }
+
+        public GenomeErrorFree()
+        {
+
         }
         /// <summary>
         /// <ol>
