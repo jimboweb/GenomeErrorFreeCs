@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//TODO: write the tests
 namespace GenomeErrorFree
 {
     class GenomeErrorFree
@@ -67,8 +68,24 @@ namespace GenomeErrorFree
         private string assembleString(OverlapGraph gr, HamiltonianPath hp)
         {
             var rtrn = "";
-            //TODO: assemble the string from the graph
+            var wholeStringOverlap = 0;
+            foreach(var node in hp.nodes)
+            {
+                var overlappingString = gr.StringSegments[node.NextString].Str;
+                wholeStringOverlap += node.overlapPoint;
+                combineString(rtrn, overlappingString, wholeStringOverlap);
+            }
             return rtrn;
+        }
+
+        private string combineString(string overlappedString, string overlappingString, int overlapPoint)
+        {
+            if (overlappedString.Substring(overlapPoint).Equals(overlappingString.Substring(0, overlapPoint)){
+                return overlappedString.Substring(0,overlapPoint) + overlappingString;
+            }
+
+            throw new ArgumentException("string " + overlappedString + " is not overlapped by " + overlappingString + " at point " + overlapPoint);
+            
         }
 
         /// <summary>
@@ -96,7 +113,7 @@ namespace GenomeErrorFree
 
     class HamiltonianPath
     {
-        PathNode[] nodes { get; set; }
+        public PathNode[] nodes { get; set; }
         public HamiltonianPath(OverlapGraph gr)
         {
             int numberOfNodes = gr.StringSegments.Count;
@@ -131,11 +148,11 @@ namespace GenomeErrorFree
     class PathNode
     {
         public int NextString { get; set; }
-        public int OverlapLength { get; set; }
+        public int overlapPoint { get; set; }
         public PathNode (int NextString, int OverlapLength)
         {
             this.NextString = NextString;
-            this.OverlapLength = OverlapLength;
+            this.overlapPoint = OverlapLength;
         }
     }
 
