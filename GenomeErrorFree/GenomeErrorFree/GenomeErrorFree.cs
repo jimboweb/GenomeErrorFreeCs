@@ -85,7 +85,7 @@ namespace GenomeErrorFree
 
         private string combineString(string overlappedString, string overlappingString, int overlapPoint)
         {
-            if (overlappedString.Substring(overlapPoint).Equals(overlappingString.Substring(0, overlapPoint)){
+            if (overlappedString.Substring(overlapPoint).Equals(overlappingString.Substring(0, overlapPoint))){
                 return overlappedString.Substring(0,overlapPoint) + overlappingString;
             }
 
@@ -123,7 +123,7 @@ namespace GenomeErrorFree
         {
             int numberOfNodes = gr.StringSegments.Count;
             nodes = new PathNode[numberOfNodes];
-            LiteHeap segHeap = new LiteHeap(gr.StringSegments.Cast<IComparable>());
+            LiteHeap<StringSegment> segHeap = new LiteHeap<StringSegment>(gr.StringSegments);
             bool[] usedNodes = new bool[numberOfNodes];
            while (!segHeap.isEmpty())
             {
@@ -138,7 +138,7 @@ namespace GenomeErrorFree
         {
             int nextNode;
             SuffixOverlap nextOverlap;
-            LiteHeap olHeap = new LiteHeap(nextSeg.SuffixOverlaps.Cast<IComparable>());
+            LiteHeap<SuffixOverlap> olHeap = new LiteHeap<SuffixOverlap>(nextSeg.SuffixOverlaps);
             do
             {
                 nextOverlap = (SuffixOverlap)olHeap.getMax();
@@ -328,13 +328,13 @@ namespace GenomeErrorFree
     /// can only build heap from list of segments and 
     /// get max. no public insert method.
     /// </summary>
-    class LiteHeap
+    class LiteHeap<T> where T:IComparable
     {
-        IComparable[] HeapArray;
+        T[] HeapArray;
         int HeapSize = 0;
-        public LiteHeap(IEnumerable<IComparable> vals)
+        public LiteHeap(List<T> vals)
         {
-            HeapArray = new IComparable[vals.Count()];
+            HeapArray = new T[vals.Count()];
             foreach(var val in vals)
             {
                 insert(val);
@@ -351,7 +351,7 @@ namespace GenomeErrorFree
                 return null;
             var rtrn = HeapArray[0];
             HeapArray[0] = HeapArray[HeapSize];
-            HeapArray[HeapSize] = null;
+            HeapArray[HeapSize] = default(T) ;
             HeapSize--;
             shiftDown(0);
             return rtrn;
@@ -362,7 +362,7 @@ namespace GenomeErrorFree
             return HeapSize < 1;
         }
 
-        private void insert(IComparable val)
+        private void insert(T val)
         {
             if (HeapSize == HeapArray.Length)
                 throw new IndexOutOfRangeException("can't insert value");

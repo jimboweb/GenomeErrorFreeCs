@@ -56,6 +56,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestOverlapGraph.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GenomeErrorFree\GenomeErrorFree.csproj">
+      <Project>{e221e021-a288-48a4-8ab7-5ca2f792bd64}</Project>
+      <Name>GenomeErrorFree</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
