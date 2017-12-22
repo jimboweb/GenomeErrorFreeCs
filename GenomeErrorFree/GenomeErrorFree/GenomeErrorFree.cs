@@ -217,6 +217,8 @@ namespace GenomeErrorFree
             return Str.Substring(start, end);
         }
 
+        //TODO: BUG: findAllOverlaps isn't finding all the overlaps
+        //create testFindAllOverlaps method
         /// <summary>
         /// add all string segments that overlap to SuffixOverlaps
         /// </summary>
@@ -328,7 +330,7 @@ namespace GenomeErrorFree
     /// can only build heap from list of segments and 
     /// get max. no public insert method.
     /// </summary>
-    class LiteHeap<T> where T:IComparable
+    class LiteHeap<T> where T:IComparable<T>
     {
         T[] HeapArray;
         int HeapSize = 0;
@@ -345,10 +347,10 @@ namespace GenomeErrorFree
         /// gets maximum or null if empty
         /// </summary>
         /// <returns></returns>
-        public IComparable getMax()
+        public T getMax()
         {
             if (isEmpty())
-                return null;
+                return default(T);
             var rtrn = HeapArray[0];
             HeapArray[0] = HeapArray[HeapSize];
             HeapArray[HeapSize] = default(T) ;

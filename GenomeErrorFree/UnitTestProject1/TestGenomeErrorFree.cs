@@ -20,6 +20,18 @@ namespace TestGenomeErrorFree
             Assert.AreEqual(cRtnString, cOriginalString);
         }
 
+        [TestMethod]
+        private void TestFindAllOverlaps()
+        {
+            //TODO: implement method
+            //Create a random string
+            //Break it up but have records of how it's broken up
+            //Create StringSegments with correct overlaps
+            //run the method
+            //loop through and compare them
+            Assert.Fail("Not implemented yet");
+        }
+
         private List<string> getStringSegments(string originalString, int numberOfSegments, int lengthOfSegments)
         {
             List<string> rtrn = new List<string>();

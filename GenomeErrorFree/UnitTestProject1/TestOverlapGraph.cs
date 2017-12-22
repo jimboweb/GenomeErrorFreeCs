@@ -6,9 +6,5 @@ namespace TestGenomeErrorFree
     [TestClass]
     public class TestOverlapGraph
     {
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
     }
 }
