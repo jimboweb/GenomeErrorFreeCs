@@ -164,9 +164,17 @@ namespace GenomeErrorFree
     /// <summary>
     /// a graph of string segments with overlaps
     /// </summary>
-    class OverlapGraph
+    public class OverlapGraph
     {
         public List<StringSegment> StringSegments { get; }
+
+        /// <summary>
+        /// debug only, for creating string segments
+        /// </summary>
+        public OverlapGraph()
+        {
+
+        }
 
         /// <summary>
         /// <ol>
@@ -190,7 +198,7 @@ namespace GenomeErrorFree
         }
     }
 
-    class StringSegment:IComparable<StringSegment>
+    public class StringSegment:IComparable<StringSegment>
     {
         OverlapGraph Parent { get;  }
         public List<SuffixOverlap> SuffixOverlaps { get; set; }
@@ -281,7 +289,7 @@ namespace GenomeErrorFree
     /// <summary>
     /// pointer to a StringSegment that overlaps parent StringSegment
     /// </summary>
-    class SuffixOverlap:IComparable<SuffixOverlap>
+    public class SuffixOverlap:IComparable<SuffixOverlap>
     {
         StringSegment Parent { get; }
         public StringSegment OverlappingString { get; }
