@@ -173,7 +173,7 @@ namespace GenomeErrorFree
         /// </summary>
         public OverlapGraph()
         {
-
+            StringSegments = new List<StringSegment>();
         }
 
         /// <summary>
