@@ -29,7 +29,7 @@ namespace TestGenomeErrorFree
             //TODO: implement method
             string str = randomString(20);
             //get the string segments with their overlap 
-            List<StringSegment> correctSegs = getStringSegObjects(str, 10, 3);
+            List<StringSegment> correctSegs = getStringSegObjects(str, 10, 7);
             //make a new list so I can take away the overlap and add it from the
             //tested method
             List<StringSegment> returnedSegs = new List<StringSegment>(correctSegs);
@@ -102,7 +102,7 @@ namespace TestGenomeErrorFree
             CircularString cOriginalString = new CircularString(originalString);
             for(int i=0; i < numberOfSegments; i++)
             {
-                string newStr = cOriginalString.Substring(currentLocation, lengthOfSegments);
+                string newStr = cOriginalString.Substring(currentLocation, currentLocation+lengthOfSegments);
                 StringSegment newSeg = new StringSegment(gr, newStr, i);
                 //add the location of this index
                 stringStarts[i] = currentLocation;
@@ -116,7 +116,7 @@ namespace TestGenomeErrorFree
             {
                 int segIndex = seg.Index;
                 int nextOverlapPoint = 0;
-                int segmentEnds;
+                int segmentEnds, distanceBetweenSegments;
                 do
                 {
                     //skip over itself
@@ -132,10 +132,17 @@ namespace TestGenomeErrorFree
                     segIndex = (segIndex + 1) % numberOfSegments;
                     //get the start point of the next string
                     nextOverlapPoint = stringStarts[segIndex];
+                    distanceBetweenSegments = mod((nextOverlapPoint - stringStarts[seg.Index]), originalString.Length);
                 } //stop when the start point of the next string is past the end of this one
-                while ((nextOverlapPoint-stringStarts[seg.Index])%originalString.Length<lengthOfSegments);
+                while (distanceBetweenSegments<lengthOfSegments);
             }
             return gr.StringSegments;
+        }
+
+        private static int mod(int x, int m)
+        {
+            int r = x % m;
+            return r < 0 ? r + m : r;
         }
 
         private List<string> getStringSegments(string originalString, int numberOfSegments, int lengthOfSegments)
@@ -194,6 +201,7 @@ namespace TestGenomeErrorFree
         public string Substring(int start, int end)
         {
             var rtrn = "";
+            end = end < start ? Length + end : end;
             for(int i = start; i < end; i++)
             {
                 rtrn += characters[i%Length];
