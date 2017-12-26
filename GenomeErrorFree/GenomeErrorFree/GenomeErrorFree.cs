@@ -388,12 +388,12 @@ namespace GenomeErrorFree
 
         private int parent(int ind)
         {
-            return ind == 0 ? -1 : (ind - 1) << 1 ;
+            return ind == 0 ? -1 : (ind - 1) >> 1 ;
         }
 
         private int leftOrRightChild(int ind, int leftOrRight)
         {
-            int childIndex = leftOrRight == 0 ? ind >> 1 + 1 : ind >> 1 + 2;
+            int childIndex = leftOrRight == 0 ? ind << 1 + 1 : ind << 1 + 2;
             return childIndex < HeapSize ? childIndex : -1;
         }
         
