@@ -128,9 +128,8 @@ namespace GenomeErrorFree
            while (!segHeap.isEmpty())
             {
                 StringSegment nextSeg = (StringSegment)segHeap.getMax();
-                PathNode currentNode = nodes[nextSeg.Index];
                 SuffixOverlap nextOverlap = getNextUnusedOverlap(nextSeg, usedNodes);
-                currentNode = new PathNode(nextOverlap.OverlappingStringIndex, nextOverlap.OverlapPoint);
+                nodes[nextSeg.Index] = new PathNode(nextOverlap.OverlappingStringIndex, nextOverlap.OverlapPoint);
             }
         }
 
@@ -206,6 +205,7 @@ namespace GenomeErrorFree
         public string Str { get; }
         public int Index { get; }
         public int Length { get { return Str.Length; } }
+
 
         public StringSegment(OverlapGraph Parent, String Str, int Index)
         {
