@@ -285,7 +285,7 @@ namespace GenomeErrorFree
         /// <returns>comprison of longest overlaps</returns>
         public int CompareTo(StringSegment other)
         {
-            return LongestOverlap.LengthOfOverlap.CompareTo(other.LongestOverlap.LengthOfOverlap);
+            return other==null ? 1 : LongestOverlap.LengthOfOverlap.CompareTo(other.LongestOverlap.LengthOfOverlap);
         }
     }
 
@@ -332,7 +332,7 @@ namespace GenomeErrorFree
         /// <returns>true if this one's overlap length is bigger</returns>
         public int CompareTo(SuffixOverlap other)
         {
-            return LengthOfOverlap.CompareTo(other.LengthOfOverlap);
+            return other == null ? 1 : LengthOfOverlap.CompareTo(other.LengthOfOverlap);
         }
     }
 
