@@ -11,7 +11,7 @@ namespace TestGenomeErrorFree
         char[] characters = { 'a', 'c', 't', 'g' };
         Random rnd = new Random();
 
-        //[TestMethod]
+        [TestMethod]
         public void TestReturnGenome()
         {
             var gef = new GenomeErrorFree.GenomeErrorFree();
@@ -23,10 +23,9 @@ namespace TestGenomeErrorFree
             Assert.AreEqual(cRtnString, cOriginalString);
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void TestFindAllOverlaps()
         {
-            //TODO: implement method
             string str = randomString(100);
             //get the string segments with their overlap 
             List<StringSegment> correctSegs = getStringSegObjects(str, 50, 20);
@@ -47,33 +46,20 @@ namespace TestGenomeErrorFree
                 //get the segment that has the correct overlaps
                 StringSegment otherSeg = correctSegs[seg.Index];
                 //sort them both so they will have the same order if they're the same
-                seg.SuffixOverlaps.Sort();
-                otherSeg.SuffixOverlaps.Sort();
-                //TODO: this isn't going to work because there will be more
-                //overlaps than the ones I put there. and they won't necessarily
-                //be in the same place even if I sort them. so I need a better
-                //way to check.
-                for(int i = 0; i < otherSeg.SuffixOverlaps.Count; i++)
+                foreach(var ol in otherSeg.SuffixOverlaps)
                 {
-                    Assert.AreEqual(seg.SuffixOverlaps[i], otherSeg.SuffixOverlaps[i], getTestAllOverlapsFailString(seg,otherSeg,i));
+                    var rtrndOl = seg.SuffixOverlaps.Find(rol=>rol.OverlappingStringIndex == ol.OverlappingStringIndex && rol.OverlapPoint==ol.OverlapPoint);
+                    if (rtrndOl==null)
+                    {
+                        Assert.Fail("returned overlap on segment " + seg.Index + " did not contain overlap with string " +
+                            ol.OverlappingStringIndex + " at point " + ol.OverlapPoint);
+                    }
+                    //Assert.AreEqual(ol.OverlapPoint, rtrndOl.OverlapPoint, "returned overlap on segment " + seg.Index + 
+                    //    " overlap with " +ol.OverlappingStringIndex +
+                    //    " did not have the same overlap point. actual was " +
+                    //    ol.OverlapPoint + " returned was " + rtrndOl.OverlapPoint);
                 }
             }
-        }
-
-        /// <summary>
-        /// the fail string for the testGetAllOverlaps method
-        /// </summary>
-        /// <param name="seg"></param>
-        /// <param name="otherSeg"></param>
-        /// <returns></returns>
-        private string getTestAllOverlapsFailString(StringSegment seg, StringSegment otherSeg, int i)
-        {
-            return "failed test at StringSegment " + seg.Index + "\n" +
-                                        " suffix overlap " + i + " expected string segment \n" +
-                                        seg.SuffixOverlaps[i].OverlappingStringIndex + " at index\n" +
-                                        seg.SuffixOverlaps[i].OverlapPoint + " but got string segment \n" +
-                                        otherSeg.SuffixOverlaps[i].OverlappingStringIndex + " at index " +
-                                        otherSeg.SuffixOverlaps[i].OverlapPoint;
         }
 
         private string randomString(int length)
@@ -112,7 +98,7 @@ namespace TestGenomeErrorFree
                 //add this string segment to the graph
                 gr.StringSegments.Add(newSeg);
                 //increase the current location
-                currentLocation = (currentLocation + rnd.Next(lengthOfSegments))%originalString.Length;
+                currentLocation = (currentLocation + rnd.Next(lengthOfSegments)+1)%originalString.Length;
             }
             //now we will go through the string segment and add overlaps based on the stringStarts array
             foreach (StringSegment seg in gr.StringSegments)

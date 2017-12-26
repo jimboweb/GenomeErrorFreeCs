@@ -143,7 +143,7 @@ namespace GenomeErrorFree
             {
                 nextOverlap = (SuffixOverlap)olHeap.getMax();
                 nextNode = nextOverlap.OverlappingStringIndex;
-            } while (!usedNodes[nextNode]);
+            } while (usedNodes[nextNode]);
             usedNodes[nextNode] = true;
             return nextOverlap;
         }
@@ -343,11 +343,13 @@ namespace GenomeErrorFree
     /// </summary>
     class LiteHeap<T> where T:IComparable<T>
     {
-        T[] HeapArray;
-        int HeapSize = 0;
+        public T[] HeapArray { get; set; }
+        public int HeapSize { get; set; }
+        private int LastIndex { get { return HeapSize - 1; } }
         public LiteHeap(List<T> vals)
         {
             HeapArray = new T[vals.Count()];
+            HeapSize = 0;
             foreach(var val in vals)
             {
                 insert(val);
@@ -363,8 +365,8 @@ namespace GenomeErrorFree
             if (isEmpty())
                 return default(T);
             var rtrn = HeapArray[0];
-            HeapArray[0] = HeapArray[HeapSize];
-            HeapArray[HeapSize] = default(T) ;
+            HeapArray[0] = HeapArray[LastIndex];
+            HeapArray[LastIndex] = default(T) ;
             HeapSize--;
             shiftDown(0);
             return rtrn;
@@ -386,12 +388,12 @@ namespace GenomeErrorFree
 
         private int parent(int ind)
         {
-            return ind == 0 ? -1 : ind / 2;
+            return ind == 0 ? -1 : (ind - 1) << 1 ;
         }
 
         private int leftOrRightChild(int ind, int leftOrRight)
         {
-            int childIndex = leftOrRight==0? 2 * ind : 2 * ind + 1;
+            int childIndex = leftOrRight == 0 ? ind >> 1 + 1 : ind >> 1 + 2;
             return childIndex < HeapSize ? childIndex : -1;
         }
         
