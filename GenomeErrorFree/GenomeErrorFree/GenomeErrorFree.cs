@@ -247,13 +247,16 @@ namespace GenomeErrorFree
         /// </summary>
         /// <param name="overlappingString">the string segment that could overlap</param>
         /// <param name="shortestOverlap">optional parameter for shortest possible overlap</param>
-        public void findOverlap(StringSegment overlappingString, int shortestOverlap = 0)
+        public void findOverlap(StringSegment overlappingString, int shortestOverlap = 1)
         {
             int maxOverlap = Length - shortestOverlap;
             int minOverlap = Length - overlappingString.Length;
+            var l = overlappingString.Str.Length;
             for (var i = maxOverlap; i > minOverlap; i--)
             {
-                if (Str.Substring(i).Equals(overlappingString.Substring(0, i)))
+                string strSubstr = Str.Substring(i);
+                string olStSubstr = overlappingString.Str.Substring(0, l-i);
+                if (strSubstr.Equals(olStSubstr))
                 {
                     AddOverlap(overlappingString, i);
                 }

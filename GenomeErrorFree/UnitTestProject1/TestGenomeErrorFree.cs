@@ -27,19 +27,18 @@ namespace TestGenomeErrorFree
         public void TestFindAllOverlaps()
         {
             //TODO: implement method
-            string str = randomString(20);
+            string str = randomString(100);
             //get the string segments with their overlap 
-            List<StringSegment> correctSegs = getStringSegObjects(str, 10, 7);
+            List<StringSegment> correctSegs = getStringSegObjects(str, 50, 20);
             //make a new list so I can take away the overlap and add it from the
             //tested method
-            List<StringSegment> returnedSegs = new List<StringSegment>(correctSegs);
+            List<StringSegment> returnedSegs = new List<StringSegment>();
             //this is the strings we'll pass to the method
-            List<string> strs = new List<string>();
-            foreach(StringSegment seg in returnedSegs)
+            OverlapGraph gr = new OverlapGraph();
+            foreach(StringSegment seg in correctSegs)
             {
-                strs.Add(seg.Str);
+                returnedSegs.Add(new StringSegment(gr, seg.Str, seg.Index));
                 //empty the suffix overlap list so other method can make it again
-                seg.SuffixOverlaps = new List<SuffixOverlap>();
             }
             foreach (StringSegment seg in returnedSegs)
             {
@@ -50,7 +49,11 @@ namespace TestGenomeErrorFree
                 //sort them both so they will have the same order if they're the same
                 seg.SuffixOverlaps.Sort();
                 otherSeg.SuffixOverlaps.Sort();
-                for(int i = 0; i < seg.SuffixOverlaps.Count; i++)
+                //TODO: this isn't going to work because there will be more
+                //overlaps than the ones I put there. and they won't necessarily
+                //be in the same place even if I sort them. so I need a better
+                //way to check.
+                for(int i = 0; i < otherSeg.SuffixOverlaps.Count; i++)
                 {
                     Assert.AreEqual(seg.SuffixOverlaps[i], otherSeg.SuffixOverlaps[i], getTestAllOverlapsFailString(seg,otherSeg,i));
                 }
