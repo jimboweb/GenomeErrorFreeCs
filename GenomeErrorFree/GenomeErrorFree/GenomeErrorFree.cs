@@ -169,6 +169,11 @@ namespace GenomeErrorFree
             this.overlapPoint = OverlapLength;
         }
 
+        public override string ToString()
+        {
+            return "NextString: " + NextString + ", OverlapPoint: " + overlapPoint;
+        }
+
         public override int GetHashCode()
         {
             return base.GetHashCode();
