@@ -78,14 +78,18 @@ namespace GenomeErrorFree
             {
                 var overlappingString = gr.StringSegments[node.NextString].Str;
                 wholeStringOverlap += node.overlapPoint;
-                combineString(rtrn, overlappingString, wholeStringOverlap);
+                rtrn = combineString(rtrn, overlappingString, wholeStringOverlap);
             }
             return rtrn;
         }
 
         private string combineString(string overlappedString, string overlappingString, int overlapPoint)
         {
-            if (overlappedString.Substring(overlapPoint).Equals(overlappingString.Substring(0, overlapPoint))){
+            if ("".Equals(overlappedString))
+                return overlappingString;
+            var firstPartOverlap = overlappedString.Substring(overlapPoint);
+            var secondPartOverlap = overlappingString.Substring(0, overlappedString.Length - overlapPoint);
+            if (firstPartOverlap.Equals(secondPartOverlap)){
                 return overlappedString.Substring(0,overlapPoint) + overlappingString;
             }
 
@@ -393,7 +397,7 @@ namespace GenomeErrorFree
 
         private int leftOrRightChild(int ind, int leftOrRight)
         {
-            int childIndex = leftOrRight == 0 ? ind << 1 + 1 : ind << 1 + 2;
+            int childIndex = leftOrRight == 0 ? (ind << 1) + 1 : (ind << 1) + 2;
             return childIndex < HeapSize ? childIndex : -1;
         }
         
@@ -411,7 +415,7 @@ namespace GenomeErrorFree
         {
             var temp = HeapArray[a];
             HeapArray[a] = HeapArray[b];
-            HeapArray[b] = HeapArray[a];
+            HeapArray[b] = temp;
         }
 
         private void shiftUp(int i)

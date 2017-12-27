@@ -11,7 +11,7 @@ namespace TestGenomeErrorFree
         char[] characters = { 'a', 'c', 't', 'g' };
         Random rnd = new Random();
 
-        //[TestMethod]
+        [TestMethod]
         public void TestReturnGenome()
         {
             var gef = new GenomeErrorFree.GenomeErrorFree();
@@ -20,14 +20,14 @@ namespace TestGenomeErrorFree
             var segments = getStringSegments(originalString, 20, 10);//1618, 100);
             var rtrnString = gef.returnGenome(segments);
             var cRtnString = new CircularString(rtrnString);
-            Assert.AreEqual(cRtnString, cOriginalString);
+            Assert.AreEqual(cOriginalString,cRtnString);
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void testLiteHeap()
         {
             List<Comp> nums = new List<Comp>();
-            for(int i = 0; i < 50; i++)
+            for(int i = 0; i < 1000; i++)
             {
                 nums.Add(new Comp(rnd.Next(100)));
             }
@@ -256,7 +256,11 @@ namespace TestGenomeErrorFree
             return rtrn;
         }
 
-        
+        public override string ToString()
+        {
+            return new string(characters);
+        }
+
         public override bool Equals(object other)
         {
             if(!(other is CircularString))
