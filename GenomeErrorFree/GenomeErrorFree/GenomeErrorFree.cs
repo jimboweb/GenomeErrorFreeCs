@@ -341,7 +341,7 @@ namespace GenomeErrorFree
     /// can only build heap from list of segments and 
     /// get max. no public insert method.
     /// </summary>
-    class LiteHeap<T> where T:IComparable<T>
+    public class LiteHeap<T> where T:IComparable<T>
     {
         public T[] HeapArray { get; set; }
         public int HeapSize { get; set; }
