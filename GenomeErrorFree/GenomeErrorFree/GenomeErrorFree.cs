@@ -120,9 +120,15 @@ namespace GenomeErrorFree
 
     }
 
-    class HamiltonianPath
+    public class HamiltonianPath
     {
         public PathNode[] nodes { get; set; }
+
+        //debug purposes only
+        public HamiltonianPath(int numberOfNodes)
+        {
+            nodes = new PathNode[numberOfNodes];
+        }
         public HamiltonianPath(OverlapGraph gr)
         {
             int numberOfNodes = gr.StringSegments.Count;
@@ -153,7 +159,7 @@ namespace GenomeErrorFree
 
     }
 
-    class PathNode
+    public class PathNode
     {
         public int NextString { get; set; }
         public int overlapPoint { get; set; }
@@ -161,6 +167,20 @@ namespace GenomeErrorFree
         {
             this.NextString = NextString;
             this.overlapPoint = OverlapLength;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        //Equals method  only for testing
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PathNode))
+                return false;
+            var otherNode = (PathNode)obj;
+            return (NextString == otherNode.NextString && overlapPoint == otherNode.overlapPoint);
         }
     }
 
@@ -207,7 +227,7 @@ namespace GenomeErrorFree
         public List<SuffixOverlap> SuffixOverlaps { get; set; }
         public SuffixOverlap LongestOverlap { get; private set; }
         public string Str { get; }
-        public int Index { get; }
+        public int Index { get; set; } //set for debug only
         public int Length { get { return Str.Length; } }
 
 
@@ -300,7 +320,7 @@ namespace GenomeErrorFree
     {
         StringSegment Parent { get; }
         public StringSegment OverlappingString { get; }
-        public int OverlappingStringIndex { get;  }
+        public int OverlappingStringIndex { get; set; } //set for debug only
         public int OverlapPoint { get;  }
         public int LengthOfOverlap { get;  }
 

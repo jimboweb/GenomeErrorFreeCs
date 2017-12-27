@@ -23,6 +23,90 @@ namespace TestGenomeErrorFree
             Assert.AreEqual(cOriginalString,cRtnString);
         }
 
+        [TestMethod]
+        public void TestHamiltonianPath()
+        {
+            var lengthOfSegments = 25;
+            var originalString = getOriginalString(200);
+            var cOriginalString = new CircularString(originalString);
+            var currentLocation = 0;
+            var gr = new OverlapGraph();
+            var i = 0;
+            var prevLocation = 0;
+            StringSegment prevSeg=null;
+            //break it up into strings and give each string the overlap reference
+            while(currentLocation<cOriginalString.Length)
+            {
+                string newStr = cOriginalString.Substring(currentLocation, currentLocation + lengthOfSegments);
+                StringSegment newSeg = new StringSegment(gr, newStr, i);
+                i++;
+                //add the overlap to every one except the first
+                if (prevSeg!=null)
+                {
+                    prevSeg.AddOverlap(newSeg, currentLocation - prevLocation);
+                }
+                prevSeg = newSeg;
+                //add this string segment to the graph
+                gr.StringSegments.Add(newSeg);
+                //increase the current location
+                prevLocation = currentLocation;
+                currentLocation = (currentLocation + rnd.Next(lengthOfSegments) + 1);
+            }
+            //add the overlap to the first segment
+            gr.StringSegments[gr.StringSegments.Count - 1].AddOverlap(gr.StringSegments[0], currentLocation - cOriginalString.Length);
+            //create an empty hamiltonian path
+            HamiltonianPath correctHp = new HamiltonianPath(gr.StringSegments.Count);
+            //sort the segments by string alphabetically
+            gr.StringSegments.Sort((a, b) => a.Str.CompareTo(b.Str));
+            //change the index of the string segments
+            for (i = 0; i < gr.StringSegments.Count; i++)
+            {
+                gr.StringSegments[i].Index = i;
+            }
+            //change the OverlappingStringIndex to match the changed index of the overlapping string
+            foreach(StringSegment seg in gr.StringSegments)
+            {
+                seg.LongestOverlap.OverlappingStringIndex = seg.LongestOverlap.OverlappingString.Index;
+            }
+
+            //makes the correct hamiltonian path from the overlaps
+            SuffixOverlap nextOverlap;
+            int nextSegmentInd = gr.StringSegments[0].Index;
+            int firstSegment = nextSegmentInd;
+            i = 0;
+            do
+            {
+                nextOverlap = gr.StringSegments[nextSegmentInd].LongestOverlap;
+                nextSegmentInd = nextOverlap.OverlappingStringIndex;
+                correctHp.nodes[i] = new PathNode(nextSegmentInd, nextOverlap.OverlapPoint);
+                i++;
+            } while (nextSegmentInd!=firstSegment);
+
+            //get the returned path
+            HamiltonianPath returnedHp = new HamiltonianPath(gr);
+
+            //this part just finds the place in the correct HP that matches the first element in the returned HP
+            i = 0;
+            PathNode firstCorrectNode;
+            do
+            {
+                firstCorrectNode = correctHp.nodes[i];
+                i++;
+            } while (firstCorrectNode.NextString != returnedHp.nodes[0].NextString);
+
+            //offset is the offset between the returned HP and correct HP
+            int offset = i - 1;
+
+            //now go through and compare each node
+            for (i = 0; i < returnedHp.nodes.Length; i++)
+            {
+                var returnedNode = returnedHp.nodes[i];
+                var correctNode = correctHp.nodes[(i + offset) % correctHp.nodes.Length];
+                Assert.AreEqual(returnedNode, correctNode);
+            }
+
+        }
+
         //[TestMethod]
         public void testLiteHeap()
         {
